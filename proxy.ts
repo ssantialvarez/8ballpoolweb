@@ -9,19 +9,24 @@ export async function proxy(request: NextRequest) {
     return authRes;
   }
 
-  // Allow access to public routes without requiring a session
-  if (request.nextUrl.pathname === ("/")) {
-    return authRes;
-  }
-
   // Any route that gets to this point will be considered a protected route, and require the user to be logged-in to be able to access it
   const { origin } = new URL(request.url)
   const session = await auth0.getSession()
 
+  // Allow access to public routes without requiring a session
+  if (request.nextUrl.pathname === ("/")) {
+    // If the user does not have a session, redirect to login
+    if (!session) {
+      return authRes;
+    }
+    return NextResponse.redirect(`${origin}/dashboard`);
+  }
+
   // If the user does not have a session, redirect to login
   if (!session) {
-    return NextResponse.redirect(`${origin}/auth/login`)
+    return NextResponse.redirect(`${origin}/`)
   }
+
 
   // If a valid session exists, continue with the response from Auth0 middleware
   // You can also add custom logic here...
