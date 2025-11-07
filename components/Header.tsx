@@ -1,15 +1,41 @@
+"use client";
+
 import React from 'react';
+import { useUser } from '@auth0/nextjs-auth0';
+import AuthButton from './AuthButton';
 
 const Header: React.FC = () => {
+  const { user, isLoading } = useUser();
+
+  if (isLoading) {
+    return (
+      <header className="header-container">
+        <div className="header-content">
+          <h1 className="header-title">8 Ball Pool Web</h1>
+          <nav className="header-nav">
+            <span className="nav-link">Loading...</span>
+          </nav>
+        </div>
+      </header>
+    );
+  }
+
   return (
-    <header className="bg-blue-600 text-white p-4">
-      <div className="container mx-auto flex justify-between items-center">
-        <h1 className="text-xl font-bold">8 Ball Pool Web</h1>
-        <nav>
-          <ul className="flex space-x-4">
-            <li><a href="/dashboard" className="hover:underline">Dashboard</a></li>
-            <li><a href="/players" className="hover:underline">Players</a></li>
-          </ul>
+    <header className="header-container">
+      <div className="header-content">
+        <a href="/"><h1 className="header-title">8 Ball Pool Web</h1></a>
+        <nav className="header-nav">
+          
+          {user ? (
+            <>
+              <a href="/players" className="nav-link">Players</a>
+              <a href="/tournaments" className="nav-link">Tournaments</a>
+              <a href="/profile" className="nav-link">Profile</a>
+              <AuthButton variant="logout" className="nav-link" />
+            </>
+          ) : (
+            <AuthButton variant="login" className="nav-link" />
+          )}
         </nav>
       </div>
     </header>
