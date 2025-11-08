@@ -1,5 +1,4 @@
-import AuthButton from "@/components/AuthButton";
-
+'use client'
 export default async function Home() {
 
   return (

@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { useUser } from '@auth0/nextjs-auth0';
-import AuthButton from './AuthButton';
+import AuthButton from './button/AuthButton';
 
 const Header: React.FC = () => {
   const { user, isLoading } = useUser();
@@ -34,7 +34,10 @@ const Header: React.FC = () => {
               <AuthButton variant="logout" className="nav-link" />
             </>
           ) : (
-            <AuthButton variant="login" className="nav-link" />
+            <>
+              <AuthButton variant="login" className="nav-link" />
+              <AuthButton variant="signup" className="nav-link" />
+            </>
           )}
         </nav>
       </div>
