@@ -1,9 +1,15 @@
-import { create } from "domain";
 import apiClient from "./apiClient";
 import { User } from "@auth0/nextjs-auth0/types";
 import { AxiosError } from "axios";
 import { getAccessToken } from "@auth0/nextjs-auth0";
 import { env } from "process";
+
+export interface CreatePlayerPayload {
+    name: string;
+    ranking: number;
+    preferred_cue?: string;
+    profile_picture_url?: string;
+}
 
 export const poolService = {
     players: {
@@ -11,6 +17,24 @@ export const poolService = {
         getPlayers: async () => {
             const token = await getAccessToken();
             const response = await apiClient.get(`/players`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+            return response.data;
+        },
+        getPlayerMe: async () => {
+            const token = await getAccessToken();
+            const response = await apiClient.get(`/players/me`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+            return response.data;
+        },
+        createPlayerFromForm: async (playerData: CreatePlayerPayload) => {
+            const token = await getAccessToken();
+            const response = await apiClient.post(`/players`, playerData, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
