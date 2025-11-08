@@ -4,9 +4,9 @@
 body {
   margin: 0;
   font-family: 'Inter', sans-serif;
-  background-color: #1a1e27;
+  background-color: #f8fafc;
   min-height: 100vh;
-  color: #e2e8f0;
+  color: #1a202c;
   padding-top: 80px;
 }
 
@@ -187,11 +187,25 @@ body {
 .profile-name {
   font-size: 2rem;
   margin-top: 0.5rem;
+  color: #f7fafc;
 }
 
 .profile-email {
   font-size: 1.15rem;
   text-align: center;
+  color: #f7fafc;
+}
+
+.profile-ranking {
+  font-size: 1.15rem;
+  text-align: center;
+  color: #f7fafc;
+}
+
+.profile-preferred-cue {
+  font-size: 1.15rem;
+  text-align: center;
+  color: #f7fafc;
 }
 
 @keyframes fadeIn {
