@@ -18,7 +18,7 @@ export function decodeJwt(token: string): any {
     const decoded = Buffer.from(base64, 'base64').toString('utf-8');
     // Parse JSON
     return JSON.parse(decoded);
-  } catch (error) {
+  } catch (error: any) {
     throw new Error(`Failed to decode JWT: ${error.message}`);
   }
 }
