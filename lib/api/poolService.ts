@@ -5,7 +5,7 @@ import { AxiosError } from "axios";
 import { getAccessToken } from "@auth0/nextjs-auth0";
 import { env } from "process";
 
-export const playerService = {
+export const poolService = {
     players: {
         // player service methods
         getPlayers: async () => {

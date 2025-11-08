@@ -1,12 +1,12 @@
 'use client'
-import { playerService } from "@/lib/api/playerService";
+import { poolService } from "@/lib/api/poolService";
 import { Player } from "@/types/Player";
 import { useQuery } from "@tanstack/react-query";
 
 export default function PlayersTable() {
     const { isPending, isError, data, error } = useQuery({
         queryKey: ['players'],
-        queryFn: async () => playerService.players.getPlayers(),
+        queryFn: async () => poolService.players.getPlayers(),
     })
     return (
         <>
