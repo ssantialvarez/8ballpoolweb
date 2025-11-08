@@ -12,7 +12,7 @@ interface AuthButtonProps {
 // You can override these styles by passing additional className props
 const variantClasses = {
   login: 'bg-blue-400 text-gray-900 hover:bg-blue-500',
-  logout: 'bg-red-400 text-gray-900 hover:bg-red-500',
+  logout: 'bg-red-600 text-white hover:bg-red-700',
   signup: 'bg-green-400 text-gray-900 hover:bg-green-500',
 };
 
