@@ -26,7 +26,11 @@ export async function proxy(request: NextRequest) {
   if (!session) {
     return NextResponse.redirect(`${origin}/`)
   }
-
+  
+  // Restrict access to admin-only routes
+  if(request.nextUrl.pathname === ("/players") && !session.tokenSet.scope?.includes("admin")) {
+    return NextResponse.redirect(`${origin}/dashboard`);
+  }
 
   // If a valid session exists, continue with the response from Auth0 middleware
   // You can also add custom logic here...

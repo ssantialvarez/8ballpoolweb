@@ -18,7 +18,7 @@ export const auth0 = new Auth0Client({
     );
   },
   authorizationParameters: {
-    scope: "openid profile email",
+    scope: "openid profile email admin",
     audience: "http://localhost:5234",
   },
 })
