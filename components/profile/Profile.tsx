@@ -7,6 +7,7 @@ import Modal from "@/components/ui/modal/Modal";
 import CreatePlayerForm, { CreatePlayerData } from "@/components/players/CreatePlayerForm";
 import Button from "@/components/ui/button/Button";
 import { Edit } from "lucide-react";
+import { useImageUpload } from "@/hooks/useImageUpload";
 
 interface ProfileProps {
   playerId: string;
@@ -16,6 +17,7 @@ export default function Profile({ playerId }: ProfileProps) {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const queryClient = useQueryClient();
   const isOwnProfile = playerId === 'me';
+  const { uploadImage, uploading } = useImageUpload();
 
   const { isPending, isError, data, error } = useQuery({
       queryKey: ['player', playerId],
@@ -28,9 +30,18 @@ export default function Profile({ playerId }: ProfileProps) {
   })
 
   const updateMutation = useMutation({
-    mutationFn: (playerData: CreatePlayerData) => {
+    mutationFn: async ({ playerData, file }: { playerData: CreatePlayerData; file: File | null }) => {
       const { auth0_id, ...updateData } = playerData;
-      return poolService.players.updatePlayerMe(updateData);
+      
+      // Paso 1: Actualizar el perfil y obtener la URL presignada
+      const updatedPlayer = await poolService.players.updatePlayerMe(updateData);
+      
+      // Paso 2: Si hay un archivo y la respuesta incluye profile_picture_url, subir a S3
+      if (file && updatedPlayer.profile_picture_url) {
+        await uploadImage(file, updatedPlayer.profile_picture_url);
+      }
+      
+      return updatedPlayer;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['player', playerId] });
@@ -42,8 +53,8 @@ export default function Profile({ playerId }: ProfileProps) {
     },
   });
 
-  const handleEditSubmit = (playerData: CreatePlayerData) => {
-    updateMutation.mutate(playerData);
+  const handleEditSubmit = (playerData: CreatePlayerData, file: File | null) => {
+    updateMutation.mutate({ playerData, file });
   };
 
   if (isPending) {
@@ -94,7 +105,7 @@ export default function Profile({ playerId }: ProfileProps) {
             initialData={data}
             onSubmit={handleEditSubmit}
             onCancel={() => setIsEditModalOpen(false)}
-            isLoading={updateMutation.isPending}
+            isLoading={updateMutation.isPending || uploading}
           />
         </Modal>
       )}

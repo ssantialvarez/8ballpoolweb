@@ -5,6 +5,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import Modal from '@/components/ui/modal/Modal';
 import CreatePlayerForm, { CreatePlayerData } from '@/components/players/CreatePlayerForm';
 import { poolService } from '@/lib/api/poolService';
+import { useImageUpload } from '@/hooks/useImageUpload';
 
 interface AddPlayerButtonProps {
   className?: string;
@@ -13,9 +14,20 @@ interface AddPlayerButtonProps {
 export default function AddPlayerButton({ className }: AddPlayerButtonProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const queryClient = useQueryClient();
+  const { uploadImage, uploading } = useImageUpload();
 
   const mutation = useMutation({
-    mutationFn: (playerData: CreatePlayerData) => poolService.players.createPlayerFromForm(playerData),
+    mutationFn: async ({ playerData, file }: { playerData: CreatePlayerData; file: File | null }) => {
+      // Paso 1: Crear el jugador y obtener la URL presignada
+      const createdPlayer = await poolService.players.createPlayerFromForm(playerData);
+      
+      // Paso 2: Si hay un archivo y la respuesta incluye profile_picture_url, subir a S3
+      if (file && createdPlayer.profile_picture_url) {
+        await uploadImage(file, createdPlayer.profile_picture_url);
+      }
+      
+      return createdPlayer;
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['players'] });
       setIsModalOpen(false);
@@ -26,8 +38,8 @@ export default function AddPlayerButton({ className }: AddPlayerButtonProps) {
     },
   });
 
-  const handleSubmit = (playerData: CreatePlayerData) => {
-    mutation.mutate(playerData);
+  const handleSubmit = (playerData: CreatePlayerData, file: File | null) => {
+    mutation.mutate({ playerData, file });
   };
 
   return (
@@ -43,7 +55,7 @@ export default function AddPlayerButton({ className }: AddPlayerButtonProps) {
         <CreatePlayerForm
           onSubmit={handleSubmit}
           onCancel={() => setIsModalOpen(false)}
-          isLoading={mutation.isPending}
+          isLoading={mutation.isPending || uploading}
         />
       </Modal>
     </>

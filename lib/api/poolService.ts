@@ -8,7 +8,7 @@ export interface CreatePlayerPayload {
     name: string;
     ranking: number;
     preferred_cue?: string;
-    profile_picture_url?: string;
+    profile_picture?: string;
 }
 
 export const poolService = {
