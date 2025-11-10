@@ -32,6 +32,24 @@ export const poolService = {
             });
             return response.data;
         },
+        getPlayerById: async (id: string) => {
+            const token = await getAccessToken();
+            const response = await apiClient.get(`/players/${id}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+            return response.data;
+        },
+        updatePlayerMe: async (playerData: Partial<CreatePlayerPayload>) => {
+            const token = await getAccessToken();
+            const response = await apiClient.put(`/players/me`, playerData, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+            return response.data;
+        },
         createPlayerFromForm: async (playerData: CreatePlayerPayload) => {
             const token = await getAccessToken();
             const response = await apiClient.post(`/players`, playerData, {
@@ -69,7 +87,7 @@ export const poolService = {
                     name: playerData.name,
                     ranking: 0,
                     preferred_cue: "string",
-                    profile_picture_url: playerData.picture,
+                    profile_picture: playerData.picture,
                 },
                     {
                         headers: {
@@ -81,6 +99,20 @@ export const poolService = {
             } catch (error: any) {
                 const err = new AxiosError(error);
                 console.error("Error creating player:", err.name);
+            }
+        },
+        deletePlayer: async (playerId: number) => {
+            try {
+                const token = await getAccessToken();
+                const response = await apiClient.delete(`/players/${playerId}`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+                return response.data;
+            } catch (error: any) {
+                const err = new AxiosError(error);
+                console.error("Error deleting player:", err.name);
             }
         },
     },
