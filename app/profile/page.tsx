@@ -1,10 +1,14 @@
-import Profile from "@/components/profile/Profile";
+import { redirect } from 'next/navigation';
+import { auth0 } from '@/lib/auth0';
 
 export default async function ProfilePage() {
-    
-    return (
-        <div className="container mx-auto p-4">
-            <Profile />
-        </div>
-    );
+  const session = await auth0.getSession();
+  
+  if (!session?.user) {
+    redirect('/auth/login');
+  }
+
+  // Redirect to the user's own profile using their player ID
+  // This assumes the user has a player record created
+  redirect('/profile/me');
 }
