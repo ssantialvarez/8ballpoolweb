@@ -3,6 +3,8 @@ import { User } from "@auth0/nextjs-auth0/types";
 import { AxiosError } from "axios";
 import { getAccessToken } from "@auth0/nextjs-auth0";
 import { env } from "process";
+import { get } from "http";
+import { CreateMatchDto, FinishMatchDto, UpdateMatchDto } from "@/types/Match";
 
 export interface CreatePlayerPayload {
     name: string;
@@ -116,4 +118,70 @@ export const poolService = {
             }
         },
     },
+    matches:{
+        // match service methods
+        getMatches: async () => {
+            const token = await getAccessToken();
+            const response = await apiClient.get(`/matches`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+            return response.data;
+        },
+        getMatchById: async (id: number) => {
+            const token = await getAccessToken();
+            const response = await apiClient.get(`/matches/${id}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+            return response.data;
+        },
+        getMatchesByPlayerId: async (playerId: number) => {
+            const token = await getAccessToken();
+            const response = await apiClient.get(`/matches/player/${playerId}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+            return response.data;
+        },
+        createMatch: async (matchData: CreateMatchDto) => {
+            const token = await getAccessToken();
+            const response = await apiClient.post(`/matches`, matchData, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+            return response.data;
+        },
+        updateMatch: async (id: number, matchData: UpdateMatchDto) => {
+            const token = await getAccessToken();
+            const response = await apiClient.put(`/matches/${id}`, matchData, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+            return response.data;
+        },
+        finishMatch: async (id: number, finishData: FinishMatchDto) => {
+            const token = await getAccessToken();
+            const response = await apiClient.patch(`/matches/${id}/finish`, finishData, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+            return response.data;
+        },
+        deleteMatch: async (id: number) => {
+            const token = await getAccessToken();
+            const response = await apiClient.delete(`/matches/${id}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+            return response.data;
+        },
+    }
 };
